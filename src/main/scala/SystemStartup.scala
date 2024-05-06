@@ -1,8 +1,9 @@
 import scala.io.Source
 import java.net.{HttpURLConnection, URL}
 import play.api.libs.json._
+import java.io.{File, PrintWriter}
 
-object systemStartup {
+object SystemStartup {
   // fetching data
   // https://data.fingrid.fi/api/datasets/{datasetId}/data[?startTime][&endTime][&format][&oneRowPerTimePeriod][&page][&pageSize][&locale][&sortBy][&sortOrder]
 
@@ -63,9 +64,6 @@ object systemStartup {
     lines.drop(1).map(_.split(",").toList.map(_.trim))
   }
 
-  import scala.io.Source
-  import java.io.{File, PrintWriter}
-
   private def mergeCsvFiles(fileNames: List[String], outputFileName: String): Unit = {
     val printWriter = new PrintWriter(new File(outputFileName))
     fileNames.zipWithIndex.foreach { case (fileName, index) =>
@@ -79,5 +77,4 @@ object systemStartup {
     }
     printWriter.close()
   }
-
 }

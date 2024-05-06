@@ -1,6 +1,6 @@
 import scala.util.Try
 
-object dataFilter {
+object DataFilter {
   private def extractDateTimeAndPower(data: List[List[String]]): List[(String, Double)] = {
     data.flatMap {
       case List(startTime, _, powerGeneration) =>
@@ -17,16 +17,15 @@ object dataFilter {
         None
     }
   }
+  
   def dataHourly(data: List[List[String]]): List[(String, Double)] = {
     val dateTimePower = extractDateTimeAndPower(data)
-    val groupedData = dateTimePower.grouped(4).toList.filter(_.nonEmpty)
-    groupedData.map { hourlyData =>
+    dateTimePower.grouped(4).toList.filter(_.nonEmpty).map { hourlyData =>
       val averagePower = hourlyData.map(_._2).sum / hourlyData.size
       (hourlyData.head._1, averagePower)
     }
   }
-
-
+  
   def dataDaily(data: List[List[String]]): List[(String, Double)] = {
     val dateTimePower = extractDateTimeAndPower(data)
     dateTimePower.grouped(96).toList.map { dailyData =>

@@ -24,7 +24,7 @@ def main(): Unit = {
     option match {
       case "1" => ViewStatus.generateGraph()
       case "2" => DataAnalysis.analyzeData(windData)
-      case "3" => Alert.detectErrors(windData)
+      case "3" => Alert.detectErrors()
       case "4" => println("Exiting system...")
       case _ => println("Invalid option. Please enter a number between 1 and 4.")
     }

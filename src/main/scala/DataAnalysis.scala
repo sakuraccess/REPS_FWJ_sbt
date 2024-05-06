@@ -35,7 +35,7 @@ object DataAnalysis {
 
   private def midValue(data: List[(String, Double)]): Double = median(data)
 
-  def analyzeData(data: List[List[String]]): Unit = {
+  def analyzeData(): Unit = {
     
     println("Analyzing data...")
     //    val data = CSVconvertMatrix.csvToMatrix("wind.csv")

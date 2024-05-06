@@ -8,3 +8,8 @@ lazy val root = (project in file("."))
   )
 
 libraryDependencies += "org.playframework" %% "play-json" % "3.0.3"
+
+libraryDependencies ++= Seq(
+  "org.jfree" % "jfreechart" % "1.5.4",
+  "org.jfree" % "jcommon" % "1.0.24"
+)

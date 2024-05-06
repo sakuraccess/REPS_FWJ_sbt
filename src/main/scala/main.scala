@@ -5,11 +5,11 @@ def main(): Unit = {
   println("Welcome to the Renewable Energy Plant System!")
   //    apiDataFetching.fetchData()
 
-  systemStartup.startup()
+//  systemStartup.startup()
 
-  val windData = systemStartup.csvToMatrix("wind.csv")
-  val solarData = systemStartup.csvToMatrix("solar.csv")
-  val HydroData = systemStartup.csvToMatrix("hydro.csv")
+  val windData = systemStartup.csvToMatrix("75_2023-12-01T0000_2024-04-30T2355.csv")
+  val solarData = systemStartup.csvToMatrix("248_2023-12-01T0000_2024-04-30T2359.csv")
+  val hydroData = systemStartup.csvToMatrix("191_2023-12-01T0000_2024-04-30T2359.csv")
 
   var option: String = ""
   while (option != "4") {

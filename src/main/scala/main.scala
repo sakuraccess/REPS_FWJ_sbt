@@ -4,12 +4,11 @@ import scala.io.StdIn.readLine
 def main(): Unit = {
   println("Welcome to the Renewable Energy Plant System!")
   //    apiDataFetching.fetchData()
-
   SystemStartup.startup()
 
-  val windData = SystemStartup.csvToMatrix("75_2023-12-01T0000_2024-04-30T2355.csv")
-  val solarData = SystemStartup.csvToMatrix("248_2023-12-01T0000_2024-04-30T2359.csv")
-  val hydroData = SystemStartup.csvToMatrix("191_2023-12-01T0000_2024-04-30T2359.csv")
+  val windData = SystemStartup.csvToMatrix("wind.csv")
+  val solarData = SystemStartup.csvToMatrix("solar.csv")
+  val hydroData = SystemStartup.csvToMatrix("hydro.csv")
 
   var option: String = ""
   while (option != "4") {

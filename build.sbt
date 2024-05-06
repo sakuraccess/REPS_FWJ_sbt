@@ -6,3 +6,5 @@ lazy val root = (project in file("."))
   .settings(
     name := "REPS_FWJ_sbt"
   )
+
+libraryDependencies += "org.playframework" %% "play-json" % "3.0.3"

@@ -6,10 +6,6 @@ def main(): Unit = {
   //    apiDataFetching.fetchData()
 //  SystemStartup.startup()
 
-  val windData = SystemStartup.csvToMatrix("wind.csv")
-  val solarData = SystemStartup.csvToMatrix("solar.csv")
-  val hydroData = SystemStartup.csvToMatrix("hydro.csv")
-
   var option: String = ""
   while (option != "4") {
     println("\nPlease choose an option:")
@@ -22,8 +18,8 @@ def main(): Unit = {
     option = readLine()
 
     option match {
-      case "1" => ViewStatus.viewStatus(windData)
-      case "2" => DataAnalysis.analyzeData(windData)
+      case "1" => ViewStatus.viewStatus()
+      case "2" => DataAnalysis.analyzeData()
       case "3" => Alert.detectErrors()
       case "4" => println("Exiting system...")
       case _ => println("Invalid option. Please enter a number between 1 and 4.")

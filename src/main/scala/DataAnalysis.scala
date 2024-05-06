@@ -36,8 +36,19 @@ object DataAnalysis {
   private def midValue(data: List[(String, Double)]): Double = median(data)
 
   def analyzeData(data: List[List[String]]): Unit = {
+    
     println("Analyzing data...")
     //    val data = CSVconvertMatrix.csvToMatrix("wind.csv")
+    println("What type of data do you want to detect:\n1. Wind\n2. Solar\n3. Hydro")
+    val datatype = readLine().trim
+    val data = datatype match {
+      case "1" => SystemStartup.csvToMatrix("wind.csv")
+      case "2" => SystemStartup.csvToMatrix("solar.csv")
+      case "3" => SystemStartup.csvToMatrix("hydro.csv")
+      case _ =>
+        println("Invalid choice, defaulting to Wind Power data.")
+        SystemStartup.csvToMatrix("wind.csv")
+    }
     println(
       "Choose the time frame for analysis:\n1. Hourly\n2. Daily\n3. Weekly\n4. Monthly"
     )
@@ -52,22 +63,13 @@ object DataAnalysis {
         println("Invalid choice, defaulting to Daily data.")
         DataFilter.dataDaily(data)
     }
-
-    println(
-      "Choose the type of statistical analysis:\n1. Average\n2. Median\n3. Mode\n4. Range\n5. Mid Value"
-    )
-    val analysisType = readLine()
-    val result = analysisType match {
-      case "1" => s"Average Power: ${average(selectedData)}"
-      case "2" => s"Median Power: ${median(selectedData)}"
-      case "3" => s"Mode Power: ${mode(selectedData)}"
-      case "4" => s"Range of Power: ${range(selectedData)}"
-      case "5" => s"Mid Value of Power: ${midValue(selectedData)}"
-      case _ =>
-        println("Invalid choice, calculating Average by default.")
-        s"Average Power: ${average(selectedData)}"
-    }
-
-    println(result)
+    
+    
+      println(s"Average Power: ${average(selectedData)}")
+      println(s"Median Power: ${median(selectedData)}")
+      println(s"Mode Power: ${mode(selectedData)}")
+      println(s"Range of Power: ${range(selectedData)}")
+      println(s"Mid Value of Power: ${midValue(selectedData)}")
+   
   }
 }

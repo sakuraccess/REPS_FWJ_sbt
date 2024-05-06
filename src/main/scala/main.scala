@@ -4,7 +4,7 @@ import scala.io.StdIn.readLine
 def main(): Unit = {
   println("Welcome to the Renewable Energy Plant System!")
   //    apiDataFetching.fetchData()
-  SystemStartup.startup()
+//  SystemStartup.startup()
 
   val windData = SystemStartup.csvToMatrix("wind.csv")
   val solarData = SystemStartup.csvToMatrix("solar.csv")
@@ -22,7 +22,7 @@ def main(): Unit = {
     option = readLine()
 
     option match {
-      case "1" => ViewStatus.generateGraph()
+      case "1" => ViewStatus.viewStatus(windData)
       case "2" => DataAnalysis.analyzeData(windData)
       case "3" => Alert.detectErrors(windData)
       case "4" => println("Exiting system...")

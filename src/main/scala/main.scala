@@ -5,7 +5,7 @@ def main(): Unit = {
   println("Welcome to the Renewable Energy Plant System!")
   //    apiDataFetching.fetchData()
 
-//  systemStartup.startup()
+  systemStartup.startup()
 
   val windData = systemStartup.csvToMatrix("75_2023-12-01T0000_2024-04-30T2355.csv")
   val solarData = systemStartup.csvToMatrix("248_2023-12-01T0000_2024-04-30T2359.csv")

@@ -4,8 +4,8 @@ import scala.io.StdIn.readLine
 def main(): Unit = {
   println("Welcome to the Renewable Energy Plant System!")
   //    apiDataFetching.fetchData()
-//  SystemStartup.startup()
-
+  //  SystemStartup.startup()
+  
   var option: String = ""
   while (option != "4") {
     println("\nPlease choose an option:")
@@ -14,9 +14,9 @@ def main(): Unit = {
     println("3: Detect errors in the data")
     println("4: Exit")
     println("Enter your choice (1-4):")
-
+    
     option = readLine()
-
+    
     option match {
       case "1" => ViewStatus.viewStatus()
       case "2" => DataAnalysis.analyzeData()

@@ -13,3 +13,6 @@ libraryDependencies ++= Seq(
   "org.jfree" % "jfreechart" % "1.5.4",
   "org.jfree" % "jcommon" % "1.0.24"
 )
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0"
+

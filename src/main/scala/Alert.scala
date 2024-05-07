@@ -4,16 +4,16 @@ object Alert {
   def detectErrors(): Unit = {
     println("Detecting errors in the data...")
     println("What type of data do you want to detect:\n1. Wind\n2. Solar\n3. Hydro")
+    
     val datatype = readLine().trim
     val data = datatype match {
-      case "1" => SystemStartup.csvToMatrix("wind.csv")
-      case "2" => SystemStartup.csvToMatrix("solar.csv")
-      case "3" => SystemStartup.csvToMatrix("hydro.csv")
-      case _ =>
-        println("Invalid choice, defaulting to Wind Power data.")
-        SystemStartup.csvToMatrix("wind.csv")
+      case "1" => SystemStartup.csvToMatrix("./datasets/wind.csv")
+      case "2" => SystemStartup.csvToMatrix("./datasets/solar.csv")
+      case "3" => SystemStartup.csvToMatrix("./datasets/hydro.csv")
+      case _ => println("Invalid choice, defaulting to Wind Power data.")
+        SystemStartup.csvToMatrix("./datasets/wind.csv")
     }
-
+    
     val selectedData = DataFilter.dataHourly(data)
     if (selectedData.nonEmpty) {
       val lastEntries = selectedData.takeRight(5)
@@ -27,7 +27,7 @@ object Alert {
       println("No data available for analysis.")
     }
   }
-
+  
   private def checkWind(data: List[(String, Double)]): Unit = {
     if (data.length >= 5) {
       val stabilityCheck = data.take(4).map(_._2).sliding(2).forall(pair => math.abs(pair(1) - pair(0)) <= 100)
@@ -39,7 +39,7 @@ object Alert {
       }
     }
   }
-
+  
   private def checkSolar(data: List[(String, Double)]): Unit = {
     if (data.nonEmpty && data.last._2 == 0.0) {
       println("Alert: Solar power data shows zero at the afternoon, it is not normally situation")
@@ -47,7 +47,7 @@ object Alert {
       println("No issues detected with Solar power data.")
     }
   }
-
+  
   private def checkHydro(data: List[(String, Double)]): Unit = {
     val threshold = 10000.0
     if (data.nonEmpty && data.last._2 > threshold) {

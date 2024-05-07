@@ -3,7 +3,7 @@ import java.util.Date
 
 object DataAnalysis {
   
-  def analyzeData(startDate: String, endDate: String, timeFrame: String, dataType: String): (Double, Double, Double, Double, Double) = {
+  def analyzeData(startDate: String, endDate: String, timeFrame: String, dataType: String): (String, String, String, String, String, String) = {
     
     //    println("Analyzing data...")
     //    val data = CSVconvertMatrix.csvToMatrix("./datasets/wind.csv")
@@ -26,6 +26,8 @@ object DataAnalysis {
     
     //    val timeFrame = readLine()
     
+    //    println(desiredDataRange)
+    
     val selectedData = timeFrame match {
       case "Hourly" => DataFilter.dataHourly(desiredDataRange)
       case "Daily" => DataFilter.dataDaily(desiredDataRange)
@@ -36,13 +38,24 @@ object DataAnalysis {
         DataFilter.dataDaily(desiredDataRange)
     }
     
+    val message =
+      if selectedData.head._1 == "false" then "The time frame you selected is too short for this filtering operation."
+      else "Nothing"
+      
+//    println(selectedData)
+    
     //    println(s"Average Power: ${average(selectedData)}")
     //    println(s"Median Power: ${median(selectedData)}")
     //    println(s"Mode Power: ${mode(selectedData)}")
     //    println(s"Range of Power: ${range(selectedData)}")
     //    println(s"Mid Value of Power: ${midValue(selectedData)}")
     
-    (average(selectedData), median(selectedData), mode(selectedData), range(selectedData), midValue(selectedData))
+    (String.format(s"%.${3}f", average(selectedData)),
+      String.format(s"%.${3}f", median(selectedData)),
+      String.format(s"%.${3}f", mode(selectedData)),
+      String.format(s"%.${3}f", range(selectedData)),
+      String.format(s"%.${3}f", midValue(selectedData)),
+      message)
   }
   
   private def average(data: List[(String, Double)]): Double = {
@@ -82,21 +95,34 @@ object DataAnalysis {
   private def processRange(originalData: List[List[String]], startDate: String, endDate: String): List[List[String]] = {
     val dateFormat = new SimpleDateFormat("dd/MM/yyyy")
     val targetFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    
     val startDateParsed: Date = dateFormat.parse(startDate)
     val endDateParsed: Date = dateFormat.parse(endDate)
     
     // Convert start and end dates to the timestamp format for comparison
-    val startDateTime: String = targetFormat.format(startDateParsed)
-    val endDateTime: String = targetFormat.format(endDateParsed)
+    //    val startDateTime: String = targetFormat.format(startDateParsed)
+    //    print(startDateTime)
+    //    val endDateTime: String = targetFormat.format(endDateParsed)
+    //    print(endDateTime)
+    def compareDate(date1: Date, date2: Date): Boolean = {
+      val comparisonResult = date1.compareTo(date2)
+      if comparisonResult < 0 then true
+      else if comparisonResult > 0 then false
+      else true
+    }
     
     originalData.filter { record =>
       // Assume the format of each record is List("start time", "end time", "value")
-      val startTime = record.head // or record(0) depending on your certainty of record structure
-      val endTime = record(1)
+      val startTime: Date = targetFormat.parse(record.head.replace("\"", "")) // or record(0) depending on your certainty of record structure
+      //      print(startTime)
+      val endTime: Date = targetFormat.parse(record(1).replace("\"", ""))
+      //      print(endTime)
       
       // Compare start and end times of each record to the desired range
-      startTime >= startDateTime && endTime <= endDateTime
+      compareDate(startDateParsed, startTime) && compareDate(startTime, endDateParsed) && compareDate(endTime, endDateParsed) && compareDate(startDateParsed, endTime)
+      //      println(o)
     }
+    
   }
   
 }

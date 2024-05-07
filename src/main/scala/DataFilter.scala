@@ -1,7 +1,8 @@
+import scala.swing.Dialog
 import scala.util.Try
 
 object DataFilter {
-  private def extractDateTimeAndPower(
+  def extractDateTimeAndPower(
       data: List[List[String]]
   ): List[(String, Double)] = {
     data.flatMap {
@@ -32,31 +33,35 @@ object DataFilter {
   }
 
   def dataDaily(data: List[List[String]]): List[(String, Double)] = {
-    val dateTimePower = extractDateTimeAndPower(data)
-    dateTimePower.grouped(96).toList.map { dailyData =>
-      val averagePower =
-        if (dailyData.nonEmpty) dailyData.map(_._2).sum / dailyData.size else 0
-      (dailyData.head._1, averagePower)
-    }
+      val dateTimePower = extractDateTimeAndPower(data)
+      dateTimePower.grouped(96).toList.map { dailyData =>
+        val averagePower =
+          if (dailyData.nonEmpty) dailyData.map(_._2).sum / dailyData.size else 0
+        (dailyData.head._1, averagePower)
+      }
   }
 
   def dataWeekly(data: List[List[String]]): List[(String, Double)] = {
-    val dateTimePower = extractDateTimeAndPower(data)
-    dateTimePower.grouped(672).toList.map { weeklyData =>
-      val averagePower =
-        if (weeklyData.nonEmpty) weeklyData.map(_._2).sum / weeklyData.size
-        else 0
-      (weeklyData.head._1, averagePower)
-    }
+    if data.length < 672 then List(("false", 0.00))
+    else
+      val dateTimePower = extractDateTimeAndPower(data)
+      dateTimePower.grouped(672).toList.map { weeklyData =>
+        val averagePower =
+          if (weeklyData.nonEmpty) weeklyData.map(_._2).sum / weeklyData.size
+          else 0
+        (weeklyData.head._1, averagePower)
+      }
   }
 
   def dataMonthly(data: List[List[String]]): List[(String, Double)] = {
-    val dateTimePower = extractDateTimeAndPower(data)
-    dateTimePower.grouped(2880).toList.map { monthlyData =>
-      val averagePower =
-        if (monthlyData.nonEmpty) monthlyData.map(_._2).sum / monthlyData.size
-        else 0
-      (monthlyData.head._1, averagePower)
-    }
+    if data.length < 2880 then List(("false", 0.00))
+    else
+      val dateTimePower = extractDateTimeAndPower(data)
+      dateTimePower.grouped(2880).toList.map { monthlyData =>
+        val averagePower =
+          if (monthlyData.nonEmpty) monthlyData.map(_._2).sum / monthlyData.size
+          else 0
+        (monthlyData.head._1, averagePower)
+      }
   }
 }

@@ -1,4 +1,4 @@
-import org.jfree.chart.{ChartFactory, ChartUtils}
+import org.jfree.chart.{ChartFactory, ChartUtils, JFreeChart}
 import org.jfree.data.time.{Minute, TimeSeries, TimeSeriesCollection}
 
 import java.io.File
@@ -61,12 +61,16 @@ object ViewsGenerate {
     plottingData
   }
   
-  private def generatePlot(plottingData: List[(String, Double)], dataType: String) = {
+  def generatePlot(plottingData: List[(String, Double)], dataType: String): JFreeChart = {
     val title = dataType match {
       case "1" => "Wind Power Generation in last 24h"
       case "2" => "Solar Power Generation in last 24h"
       case "3" => "Hydro Power Production in last 24h"
       case "4" => "Overview of current total production capacity in last 24h"
+      case "5" => "Wind Power Generation in last 1h"
+      case "6" => "Solar Power Generation in last 1h"
+      case "7" => "Hydro Power Production in last 1h"
+      case "8" => "Overview of current total production capacity in last 1h"
       case _ => "Wind Power Generation"
     }
     val series = new TimeSeries(title)
@@ -82,7 +86,7 @@ object ViewsGenerate {
     
     ChartFactory.createTimeSeriesChart(title, // Title
       "Hour", // X-axis Label
-      "Power Generation, Unit MW", // Y-axis Label
+      "Power Generation/Production, Unit MW", // Y-axis Label
       dataset, // Dataset
       true, // Legend
       true, // Tooltips

@@ -2,7 +2,7 @@ import scala.io.StdIn.readLine
 
 @main
 def main(): Unit = {
-  println("Welcome to the Renewable Energy Plant System!")
+//  println("Welcome to the Renewable Energy Plant System!")
   //    apiDataFetching.fetchData()
   
 //  var option: String = ""
@@ -26,6 +26,6 @@ def main(): Unit = {
 //  }
 
   SystemStartup.startup()
-//  ViewsGenerate.viewStatus()
-//  GUI.main()
+  val gui = new GUI
+  gui.startup(Array(""))
 }

@@ -39,7 +39,7 @@ object ViewsGenerate {
     
     val chart = generatePlot(plottingData, dataType)
     ChartUtils.saveChartAsPNG(new File(fileName), chart, 600, 400)
-//    println("Chart has been saved as PNG.") //    println(plottingData)
+    //    println("Chart has been saved as PNG.") //    println(plottingData)
   }
   
   private def dataProcessing(entireDataset: List[List[String]], dataType: String): List[(String, Double)] = {

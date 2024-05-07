@@ -7,7 +7,7 @@ import scala.swing.GridBagPanel.Fill
 import scala.swing.event.*
 
 class GUI extends SimpleSwingApplication {
-//  println("Welcome to the Renewable Energy Plant System!")
+  //  println("Welcome to the Renewable Energy Plant System!")
   //  SystemStartup.startup()
   
   def top: MainFrame = new MainFrame {
@@ -94,7 +94,8 @@ class GUI extends SimpleSwingApplication {
         
         c.gridy += 1
         val simulateIssuesButton = new Button("Simulate Issues")
-        layout(simulateIssuesButton) = c
+        if dataType != "4" then
+          layout(simulateIssuesButton) = c
         
         listenTo(analysisButton)
         reactions += {
@@ -103,40 +104,50 @@ class GUI extends SimpleSwingApplication {
             val endDate = input2.text
             val timeSpan = timeSpanSelector.selection.item
             
-            if (startDate == endDate) {
-              Dialog.showMessage(
+            try {
+              if (startDate == endDate) {
+                Dialog.showMessage(
+                  contents.head,
+                  "Start date cannot be the same as end date.",
+                  title = "Error"
+                )
+              } else if (compareDate(dateFormat.parse(endDate), dateFormat.parse(startDate))) {
+                Dialog.showMessage(
+                  contents.head,
+                  "Start date cannot be later than the end date.",
+                  title = "Error"
+                )
+              } else if (validateDate(startDate) == "true" && validateDate(endDate) == "true") {
+                val results = DataAnalysis.analyzeData(startDate, endDate, timeSpan, dataType)
+                if results._6 != "Nothing" then Dialog.showMessage(
+                  contents.head,
+                  results._6,
+                  title = "Error"
+                ) else resultsArea.text = s"Mean: ${results._1}\nMedian: ${results._2}\nMode: ${results._3}\nRange: ${results._4}\nMidrange: ${results._5}"
+              } else if (validateDate(startDate) != "true") {
+                //              resultsArea.text = "Invalid date format. Please enter the date in the format 'DD/MM/YYYY'.\nFor example, enter '12/04/2024' for April 12, 2024."
+                Dialog.showMessage(
+                  contents.head,
+                  validateDate(startDate),
+                  title = "Date Format Error"
+                )
+              } else if (validateDate(endDate) != "true") {
+                //              resultsArea.text = "Invalid date format. Please enter the date in the format 'DD/MM/YYYY'.\nFor example, enter '12/04/2024' for April 12, 2024."
+                Dialog.showMessage(
+                  contents.head,
+                  validateDate(endDate),
+                  title = "Date Format Error"
+                )
+              }
+            } catch {
+              case _: java.text.ParseException => Dialog.showMessage(
                 contents.head,
-                "Start date cannot be the same as end date.",
-                title = "Error"
-              )
-            } else if (compareDate(dateFormat.parse(endDate), dateFormat.parse(startDate))) {
-              Dialog.showMessage(
-                contents.head,
-                "Start date cannot be later than the end date.",
-                title = "Error"
-              )
-            } else if (validateDate(startDate) == "true" && validateDate(endDate) == "true") {
-              val results = DataAnalysis.analyzeData(startDate, endDate, timeSpan, dataType)
-              if results._6 != "Nothing" then Dialog.showMessage(
-                contents.head,
-                results._6,
-                title = "Error"
-              ) else resultsArea.text = s"Mean: ${results._1}\nMedian: ${results._2}\nMode: ${results._3}\nRange: ${results._4}\nMidrange: ${results._5}"
-            } else if (validateDate(startDate) != "true") {
-              //              resultsArea.text = "Invalid date format. Please enter the date in the format 'DD/MM/YYYY'.\nFor example, enter '12/04/2024' for April 12, 2024."
-              Dialog.showMessage(
-                contents.head,
-                validateDate(startDate),
-                title = "Date Format Error"
-              )
-            } else if (validateDate(endDate) != "true") {
-              //              resultsArea.text = "Invalid date format. Please enter the date in the format 'DD/MM/YYYY'.\nFor example, enter '12/04/2024' for April 12, 2024."
-              Dialog.showMessage(
-                contents.head,
-                validateDate(endDate),
+                "Invalid date format. Please enter the date in the format 'DD/MM/YYYY'.\nFor example, enter '12/04/2024' for April 12, 2024." +
+                  "\nOr the date you selected is not within the range, please limit your query to between December 1, 2023 and April 30, 2024",
                 title = "Date Format Error"
               )
             }
+          
         }
         
         listenTo(simulateIssuesButton)
@@ -147,6 +158,7 @@ class GUI extends SimpleSwingApplication {
               icon = new ImageIcon(dataType match {
                 case "1" => "./charts/errorWind.png"
                 case "2" => "./charts/errorSolar.png"
+                case "3" => "./charts/errorHydro.png"
               })
               verticalTextPosition = Alignment.Bottom
               horizontalTextPosition = Alignment.Center
@@ -194,15 +206,19 @@ class GUI extends SimpleSwingApplication {
     
     private def validateDate(dateStr: String): String = {
       dateFormat.setLenient(false)
-      if compareDate(dateFormat.parse(dateStr), startDateParsed) || compareDate(endDateParsed, dateFormat.parse(dateStr)) then
-        "The date you selected is not within the range, please limit your query to between December 1, 2023 and April 30, 2024"
-      else
-        try {
-          dateFormat.parse(dateStr)
-          "true"
-        } catch {
-          case _: java.text.ParseException => "Invalid date format. Please enter the date in the format 'DD/MM/YYYY'.\nFor example, enter '12/04/2024' for April 12, 2024."
-        }
+      try {
+        if compareDate(dateFormat.parse(dateStr), startDateParsed) || compareDate(endDateParsed, dateFormat.parse(dateStr)) then
+          "The date you selected is not within the range, please limit your query to between December 1, 2023 and April 30, 2024"
+        else
+          try {
+            dateFormat.parse(dateStr)
+            "true"
+          } catch {
+            case _: java.text.ParseException => "Invalid date format. Please enter the date in the format 'DD/MM/YYYY'.\nFor example, enter '12/04/2024' for April 12, 2024."
+          }
+      } catch {
+        case _: java.text.ParseException => "Invalid date format. Please enter the date in the format 'DD/MM/YYYY'.\nFor example, enter '12/04/2024' for April 12, 2024."
+      }
     }
     
     // Dummy implementation of analyzeData function

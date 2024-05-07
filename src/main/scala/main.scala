@@ -1,5 +1,3 @@
-import scala.io.StdIn.readLine
-
 @main
 def main(): Unit = {
 //  println("Welcome to the Renewable Energy Plant System!")

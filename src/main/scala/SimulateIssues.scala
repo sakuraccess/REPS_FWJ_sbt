@@ -19,13 +19,13 @@ object SimulateIssues {
     
     //    val selectedData = DataFilter.dataHourly(data)
     
-    val lastEntries = DataFilter.extractDateTimeAndPower(data).takeRight(5)
-//    println(lastEntries)
+    val lastEntries = DataFilter.extractDateTimeAndPower(data).takeRight(30)
+    //    println(lastEntries)
     val message = dataType match {
       case "1" => checkWind(lastEntries)
       case "2" => checkSolar(lastEntries)
       case "3" => checkHydro(lastEntries)
-      case "4" => checkOverall(lastEntries)
+      //      case "4" => checkOverall(lastEntries)
       case _ => checkWind(lastEntries)
     }
     message
@@ -59,16 +59,18 @@ object SimulateIssues {
   }
   
   private def checkHydro(data: List[(String, Double)]): String = {
+    val dataUnusual = data ::: List(("2024-05-01T13:30:00.000Z", 10020.0))
     val threshold = 10000.0
-    if (data.nonEmpty && data.last._2 > threshold) {
+    if (dataUnusual.last._2 > threshold) {
+      val chart = ViewsGenerate.generatePlot(dataUnusual, "7")
+      ChartUtils.saveChartAsPNG(new File("./charts/errorHydro.png"), chart, 600, 400)
       s"Alert: Hydro power data exceeds the threshold of $threshold in the latest entry, please check the equipment of hydropower or escape the flood!"
     } else {
       "No issues detected with Hydro power data."
     }
   }
   
-  private def checkOverall(data: List[(String, Double)]): String = {
-    ""
-  }
+  //  private def checkOverall(data: List[(String, Double)]): String =
+  //
   
 }

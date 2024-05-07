@@ -1,0 +1,5 @@
+[debug] Created transactional ClassFileManager with tempDir = E:\LUT yliopisto\CT60A9601 Discrete Models and Methods 2 Functional programming - Monimuoto-opetus, Lahti 4.3.2024-19.4.2024\REPS_FWJ_sbt\project\target\scala-2.12\sbt-1.0\classes.bak
+[debug] About to delete class files:
+[debug] We backup class files:
+[debug] Created transactional ClassFileManager with tempDir = E:\LUT yliopisto\CT60A9601 Discrete Models and Methods 2 Functional programming - Monimuoto-opetus, Lahti 4.3.2024-19.4.2024\REPS_FWJ_sbt\project\target\scala-2.12\sbt-1.0\classes.bak
+[debug] Removing the temporary directory used for backing up class files: E:\LUT yliopisto\CT60A9601 Discrete Models and Methods 2 Functional programming - Monimuoto-opetus, Lahti 4.3.2024-19.4.2024\REPS_FWJ_sbt\project\target\scala-2.12\sbt-1.0\classes.bak

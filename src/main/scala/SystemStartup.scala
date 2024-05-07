@@ -3,22 +3,20 @@ import play.api.libs.json.*
 import java.io.{File, PrintWriter}
 import java.net.{HttpURLConnection, URL}
 import scala.io.Source
-import java.io.PrintWriter
-import scala.io.Source
 
 object SystemStartup {
   // fetching data
   // https://data.fingrid.fi/api/datasets/{datasetId}/data[?startTime][&endTime][&format][&oneRowPerTimePeriod][&page][&pageSize][&locale][&sortBy][&sortOrder]
   
   def startup(): Unit = {
-//    fetchCSVData(248, "./datasets/solar.csv", 20000, 1)
-//    fetchCSVData(75, "./datasets/wind.csv", 20000, 1)
-//    fetchCSVData(191, "./datasets/hydro1.csv", 20000, 1)
-//    fetchCSVData(191, "./datasets/hydro2.csv", 20000, 2)
-//    fetchCSVData(191, "./datasets/hydro3.csv", 20000, 3)
-//    fetchCSVData(191, "./datasets/hydro4.csv", 20000, 4)
-//    fetchCSVData(191, "./datasets/hydro5.csv", 20000, 5)
-//    fetchCSVData(191, "./datasets/hydro6.csv", 20000, 6)
+    fetchCSVData(248, "./datasets/solar.csv", 20000, 1)
+    fetchCSVData(75, "./datasets/wind.csv", 20000, 1)
+    fetchCSVData(191, "./datasets/hydro1.csv", 20000, 1)
+    fetchCSVData(191, "./datasets/hydro2.csv", 20000, 2)
+    fetchCSVData(191, "./datasets/hydro3.csv", 20000, 3)
+    fetchCSVData(191, "./datasets/hydro4.csv", 20000, 4)
+    fetchCSVData(191, "./datasets/hydro5.csv", 20000, 5)
+    fetchCSVData(191, "./datasets/hydro6.csv", 20000, 6)
     
     val fileNames = List(
       "./datasets/hydro1.csv",
@@ -28,7 +26,7 @@ object SystemStartup {
       "./datasets/hydro5.csv",
       "./datasets/hydro6.csv"
     )
-//    mergeCsvFiles(fileNames, "./datasets/hydro.csv")
+    mergeCsvFiles(fileNames, "./datasets/hydro.csv")
     
     val threeComponentFiles = List(
       "./datasets/solar.csv",
@@ -42,6 +40,50 @@ object SystemStartup {
     ViewsGenerate.viewStatus("2")
     ViewsGenerate.viewStatus("3")
     ViewsGenerate.viewStatus("4")
+  }
+  
+  private def overviewDatasetGenerate(files: List[String]): Unit = {
+    
+    case class Record(startTime: String, endTime: String, value: Double)
+    
+    def readCsv(filename: String): List[Record] = {
+      Source.fromFile(filename).getLines().drop(1).map { line =>
+        val cols = line.split(",").map(_.trim.replace("\"", "")) // Remove quotes and trim whitespace
+        Record(cols(0), cols(1), cols(2).toDouble) // Convert the third column to Double
+      }.toList
+    }
+    
+    def aggregateHydroData(records: List[Record]): List[Record] = {
+      records.grouped(5).map { group =>
+        val averagedValue = group.map(_.value).sum / group.size
+        val first = group.head
+        val last = group.last
+        Record(first.startTime, last.endTime, averagedValue)
+      }.toList
+    }
+    
+    def mergeData(solar: List[Record], wind: List[Record], hydro: List[Record]): List[Record] = {
+      (solar, wind, hydro).zipped.toList.map { case (s, w, h) =>
+        Record(s.startTime, s.endTime, s.value + w.value + h.value)
+      }
+    }
+    
+    def writeCsv(records: List[Record], filename: String): Unit = {
+      val writer = new PrintWriter(new java.io.File(filename))
+      writer.write("Start time UTC,End time UTC,Total generation\n")
+      records.foreach { record =>
+        writer.write(s"${record.startTime},${record.endTime},${record.value}\n")
+      }
+      writer.close()
+    }
+    
+    val solarData = readCsv(files.head)
+    val windData = readCsv(files(1))
+    val hydroData = readCsv(files(2))
+    val aggregatedHydroData = aggregateHydroData(hydroData)
+    val mergedData = mergeData(solarData, windData, aggregatedHydroData)
+    
+    writeCsv(mergedData, "./datasets/overview.csv")
   }
   
   private def fetchCSVData(dataSetID: Int, fileName: String, pageSize: Int, page: Int): Unit = {
@@ -99,50 +141,6 @@ object SystemStartup {
       source.close()
     }
     printWriter.close()
-  }
-  
-  private def overviewDatasetGenerate(files: List[String]): Unit = {
-    
-    case class Record(startTime: String, endTime: String, value: Double)
-    
-    def readCsv(filename: String): List[Record] = {
-      Source.fromFile(filename).getLines().drop(1).map { line =>
-        val cols = line.split(",").map(_.trim.replace("\"", "")) // Remove quotes and trim whitespace
-        Record(cols(0), cols(1), cols(2).toDouble) // Convert the third column to Double
-      }.toList
-    }
-    
-    def aggregateHydroData(records: List[Record]): List[Record] = {
-      records.grouped(5).map { group =>
-        val averagedValue = group.map(_.value).sum / group.size
-        val first = group.head
-        val last = group.last
-        Record(first.startTime, last.endTime, averagedValue)
-      }.toList
-    }
-    
-    def mergeData(solar: List[Record], wind: List[Record], hydro: List[Record]): List[Record] = {
-      (solar, wind, hydro).zipped.toList.map { case (s, w, h) =>
-        Record(s.startTime, s.endTime, s.value + w.value + h.value)
-      }
-    }
-    
-    def writeCsv(records: List[Record], filename: String): Unit = {
-      val writer = new PrintWriter(new java.io.File(filename))
-      writer.write("Start time UTC,End time UTC,Total generation\n")
-      records.foreach { record =>
-        writer.write(s"${record.startTime},${record.endTime},${record.value}\n")
-      }
-      writer.close()
-    }
-    
-    val solarData = readCsv(files.head)
-    val windData = readCsv(files(1))
-    val hydroData = readCsv(files(2))
-    val aggregatedHydroData = aggregateHydroData(hydroData)
-    val mergedData = mergeData(solarData, windData, aggregatedHydroData)
-    
-    writeCsv(mergedData, "./datasets/overview.csv")
   }
   
   def csvToMatrix(filePath: String): List[List[String]] = {

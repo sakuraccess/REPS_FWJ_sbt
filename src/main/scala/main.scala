@@ -1,3 +1,4 @@
+// FWJ_Project_Part A
 @main
 def main(): Unit = {
 //  println("Welcome to the Renewable Energy Plant System!")

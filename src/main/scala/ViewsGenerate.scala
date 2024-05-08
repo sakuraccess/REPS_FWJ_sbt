@@ -1,3 +1,4 @@
+// FWJ_Project_Part A
 import org.jfree.chart.{ChartFactory, ChartUtils, JFreeChart}
 import org.jfree.data.time.{Minute, TimeSeries, TimeSeriesCollection}
 
